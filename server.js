@@ -72,9 +72,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("🟢 API running - Go to /api/products");
+const path = require('path');
+
+app.get('/api/products', (req, res) => {
+  try {
+    const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
+    res.json(JSON.parse(data));
+  } catch (err) {
+    console.error("Error reading products:", err);
+    res.status(500).json({ error: "Failed to load products." });
+  }
 });
+
 
 app.get('/api/products', (req, res) => {
   const data = fs.readFileSync('./api/products.json', 'utf-8');
